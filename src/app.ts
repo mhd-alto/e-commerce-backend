@@ -1,6 +1,7 @@
 import express, { Application, Request, Response } from "express";
 import dotenv from "dotenv";
 import { connectDB } from "./config/db";
+import authRouter from "./routes/authRoutes";
 
 dotenv.config();
 
@@ -18,7 +19,7 @@ app.get("/", (_req: Request, res: Response) => {
     message: "API is running",
   });
 });
-
+app.use("/auth", authRouter);
 // Start server
 async function startServer() {
   // Connect DB if configured, but always start the server.

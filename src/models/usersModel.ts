@@ -9,16 +9,18 @@ const UsersSchema = new Schema(
     },
 
     email: {
-      type: Number,
+      type: String,
       required: true,
+      unique: true,
       min: 0,
     },
 
     password: {
-      type: Number,
+      type: String,
       required: true,
       min: 0,
       default: 0,
+      select: false,
     },
 
     code: {
@@ -28,16 +30,18 @@ const UsersSchema = new Schema(
     },
 
     isverified: {
-      type: String,
+      type: Boolean,
       required: true,
       trim: true,
     },
-
-
+    role: {
+      type: String,
+      default: "user",
+    },
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 const UsersModel = model("users", UsersSchema);

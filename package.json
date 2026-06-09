@@ -20,8 +20,11 @@
   },
   "homepage": "https://github.com/lailaabouhatab/e-commerce-backend#readme",
   "dependencies": {
+    "bcryptjs": "^3.0.3",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "express-validator": "^7.3.2",
+    "jsonwebtoken": "^9.0.3",
     "mongoos": "^0.0.1-security",
     "mongoose": "^9.6.3"
   },
