@@ -9,7 +9,7 @@ const UsersSchema = new Schema(
     },
 
     email: {
-      type: Number,
+      type: String,
       required: true,
       min: 0,
     },
@@ -40,6 +40,6 @@ const UsersSchema = new Schema(
   }
 );
 
-const UsersModel = model("users", UsersSchema);
+const UsersModel = model("Users", UsersSchema);
 
 export default UsersModel;
