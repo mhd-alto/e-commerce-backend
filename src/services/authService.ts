@@ -2,12 +2,6 @@ import bcrypt = require("bcrypt");
 import jwt from "jsonwebtoken";
 import Users from "../models/usersModel";
 
-interface Users {
-  email: string;
-  password: string;
-  role: string;
-}
-
 export class AuthService {
   login = async (email: string, password: string) => {
     try {
@@ -15,18 +9,18 @@ export class AuthService {
       if (!user) {
         return { success: false, error: "User not found" };
       }
-      const valid = await bcrypt.compare(password, user.password);
+      const valid = await bcrypt.compare(password, user.passwordHash);
       if (!valid) {
         return { success: false, error: "Invalid credentials" };
       }
-      return jwt.sign(
-        {
-             id: user._id,
-             role: user.role
-        },
-        process.env.JWT_SECRET,
+      const JWT_SECRET = process.env.JWT_SECRET;
+      if (!JWT_SECRET) throw new Error("JWT_SECRET is not set in .env");
+      const token = jwt.sign(
+        { userId: user._id, role: user.role },
+        JWT_SECRET,
         { expiresIn: "1h" },
       );
+      return { success: true, token };
     } catch (error) {
       const message = error instanceof Error ? error.message : "Unknown error";
       return { success: false, error: message };
