@@ -31,7 +31,7 @@ export default class OrderController {
     res: Response
   ): Promise<void> => {
     try {
-      const { id } = req.params;
+      const { id } :any= req.params;
 
       const result = await this.orderService.getOrderById(id);
 
@@ -56,7 +56,7 @@ export default class OrderController {
       if (result.success) {
         res.status(201).json({
           data: result.data,
-          warning: result.warning,
+          warning: result.error,
         });
         return;
       }
@@ -82,12 +82,9 @@ export default class OrderController {
     res: Response
   ): Promise<void> => {
     try {
-      const { id } = req.params;
+      const { id }:any = req.params;
 
-      const result = await this.orderService.rejectOrder(
-        id,
-        req.body
-      );
+      const result = await this.orderService.rejectOrder(  id );
 
       if (result.success) {
         res.status(200).json(result.data);
@@ -101,7 +98,7 @@ export default class OrderController {
   };
 
   public acceptOrder = async (
-    req: Request,
+    req: Request<{id:string}>,
     res: Response
   ): Promise<void> => {
     try {

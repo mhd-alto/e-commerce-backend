@@ -149,7 +149,7 @@ export default class OrderService {
     }
   }
 
-  async rejectOrder(id: string): Promise<ServiceResponse<any>> {
+  async rejectOrder(id: string, ): Promise<ServiceResponse<any>> {
     try {
       const order = await OrderModel.findById(id);
 
