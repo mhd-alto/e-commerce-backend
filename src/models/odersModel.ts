@@ -10,7 +10,7 @@ const ordersSchema = new Schema(
 
     userId: {
       type: Types.ObjectId,
-      ref: "User",
+      ref: "Users",
       required: true,
     },
 
@@ -23,7 +23,7 @@ const ordersSchema = new Schema(
 
     price: {
       type: Number,
-      required: true,
+      
       min: 0,
     },
 

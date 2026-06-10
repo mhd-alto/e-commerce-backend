@@ -57,7 +57,7 @@ export default class OrderService {
     quantity: number;
   }): Promise<ServiceResponse<any>> {
     try {
-      const { productId, userId, quantity } = orderData;
+      const {userId, productId, quantity } = orderData;
 
       if (!productId || !userId || !quantity) {
         return {

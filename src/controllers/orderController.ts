@@ -51,11 +51,13 @@ if (typeof id !== "string") {
   };
 
   public createOrder = async (
-    req: Request,
+    req: any,
     res: Response
   ): Promise<void> => {
     try {
-      const result = await this.orderService.createOrder(req.body);
+            const userId = req.user.userId;
+
+      const result = await this.orderService.createOrder({ ...req.body, userId });
 
       if (result.success) {
         res.status(201).json({

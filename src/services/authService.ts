@@ -50,7 +50,7 @@ export class AuthService {
       password: hashedPassword,
       isverified: false,
     });
-
+//console.log(`New user registered: ${newUser.password}, password: ${password}, hashedPassword: ${hashedPassword}`);
     const userObj = newUser.toObject();
     const { password: _, ...userWithoutPassword } = userObj;
 
@@ -108,18 +108,19 @@ export class AuthService {
 
   login = async (email: string, password: string) => {
     try {
-      const user = await User.findOne({ email });
-
+      const user = await User.findOne({ email }).select("+password");
       if (!user) {
         return { success: false, error: "User not found" };
       }
+     console.log(user.password);
 
       const valid = await bcrypt.compare(password, user.password);
-
+   //  console.log(valid,user.password);
       if (!valid) {
+
         return { success: false, error: "Invalid credentials" };
       }
-
+console.log(`Attempting login for email: ${email}`,password);
       const JWT_SECRET = process.env.JWT_SECRET;
 
       if (!JWT_SECRET) {

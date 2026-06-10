@@ -6,7 +6,8 @@ const router = Router();
 
 const productController = new ProductController();
 
-router.get("/", productController.getAllProducts);
+router.get("/",  authMiddleware,
+  roleMiddleware(["admin", "user"]), productController.getAllProducts);
 
 router.get("/:id", productController.getProdById);
 

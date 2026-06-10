@@ -15,13 +15,13 @@ router.get(
 router.get(
   "/:id",
   authMiddleware,
-  roleMiddleware("admin||user"),
+  roleMiddleware(["admin", "user"]),
   ordersController.getOrderById,
 );
 router.post(
   "/",
   authMiddleware,
-  roleMiddleware("admin||user"),
+  roleMiddleware(["admin", "user"]),
   ordersController.createOrder,
 );
 router.put(
