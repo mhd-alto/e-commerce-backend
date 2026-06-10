@@ -1,12 +1,7 @@
 import User from "../models/usersModel";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 import "dotenv/config";
-
-// دالة التحقق من الإيميل (تم نقلها للأعلى لتجنب مشاكل النطاق)
-const isValidEmail = (email: string): boolean => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-};
 
 interface RegisterInput {
   fullName?: string;
@@ -14,68 +9,86 @@ interface RegisterInput {
   password?: string;
 }
 
-export async function register(userData: RegisterInput) {
-  const { fullName, email, password } = userData;
-  if (!email || !isValidEmail(email)) {
-    throw { statusCode: 400, message: "Enter a valid email" };
-  }
-  if (!password || password.length < 6) {
-    throw {
-      statusCode: 400,
-      message: "Password must be at least 6 characters long",
-    };
-  }
-  if (!fullName || fullName.trim().length === 0) {
-    throw { statusCode: 400, message: "Full name is required" };
-  }
-  const userExists = await User.findOne({ email });
-  if (userExists) {
-    throw {
-      statusCode: 409,
-      message: "Email is already registered.",
-    };
+export class AuthService {
+  private isValidEmail(email: string): boolean {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
   }
 
-  try {
+  register = async (userData: RegisterInput) => {
+    const { fullName, email, password } = userData;
+
+    if (!email || !this.isValidEmail(email)) {
+      throw { statusCode: 400, message: "Enter a valid email" };
+    }
+
+    if (!password || password.length < 6) {
+      throw {
+        statusCode: 400,
+        message: "Password must be at least 6 characters long",
+      };
+    }
+
+    if (!fullName || fullName.trim().length === 0) {
+      throw { statusCode: 400, message: "Full name is required" };
+    }
+
+    const userExists = await User.findOne({ email });
+
+    if (userExists) {
+      throw {
+        statusCode: 409,
+        message: "Email is already registered.",
+      };
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
+
     const newUser = await User.create({
       fullName,
       email,
       password: hashedPassword,
       isverified: false,
     });
+
     const userObj = newUser.toObject();
     const { password: _, ...userWithoutPassword } = userObj;
-    return { success: true, data: userWithoutPassword };
-  } catch (error: any) {
-    throw { statusCode: 500, message: error.message };
-  }
-}
 
-export async function addAdmin(adminData: RegisterInput) {
-  const { fullName, email, password } = adminData;
-  if (!email || !isValidEmail(email)) {
-    throw { statusCode: 400, message: "Enter a valid email" };
-  }
-  if (!password || password.length < 6) {
-    throw {
-      statusCode: 400,
-      message: "Password must be at least 6 characters long",
+    return {
+      success: true,
+      data: userWithoutPassword,
     };
-  }
-  if (!fullName || fullName.trim().length === 0) {
-    throw { statusCode: 400, message: "Full name is required" };
-  }
-  const userExists = await User.findOne({ email });
-  if (userExists) {
-    throw {
-      statusCode: 409,
-      message: "Email is already registered.",
-    };
-  }
+  };
 
-  try {
+  addAdmin = async (adminData: RegisterInput) => {
+    const { fullName, email, password } = adminData;
+
+    if (!email || !this.isValidEmail(email)) {
+      throw { statusCode: 400, message: "Enter a valid email" };
+    }
+
+    if (!password || password.length < 6) {
+      throw {
+        statusCode: 400,
+        message: "Password must be at least 6 characters long",
+      };
+    }
+
+    if (!fullName || fullName.trim().length === 0) {
+      throw { statusCode: 400, message: "Full name is required" };
+    }
+
+    const userExists = await User.findOne({ email });
+
+    if (userExists) {
+      throw {
+        statusCode: 409,
+        message: "Email is already registered.",
+      };
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
+
     const newAdmin = await User.create({
       fullName,
       email,
@@ -83,10 +96,59 @@ export async function addAdmin(adminData: RegisterInput) {
       isverified: true,
       role: "admin",
     });
+
     const userObj = newAdmin.toObject();
     const { password: _, ...userWithoutPassword } = userObj;
-    return { success: true, data: userWithoutPassword };
-  } catch (error: any) {
-    throw { statusCode: 500, message: error.message };
-  }
+
+    return {
+      success: true,
+      data: userWithoutPassword,
+    };
+  };
+
+  login = async (email: string, password: string) => {
+    try {
+      const user = await User.findOne({ email });
+
+      if (!user) {
+        return { success: false, error: "User not found" };
+      }
+
+      const valid = await bcrypt.compare(password, user.password);
+
+      if (!valid) {
+        return { success: false, error: "Invalid credentials" };
+      }
+
+      const JWT_SECRET = process.env.JWT_SECRET;
+
+      if (!JWT_SECRET) {
+        throw new Error("JWT_SECRET is not set in .env");
+      }
+
+      const token = jwt.sign(
+        {
+          userId: user._id,
+          role: user.role,
+        },
+        JWT_SECRET,
+        {
+          expiresIn: "1h",
+        }
+      );
+
+      return {
+        success: true,
+        token,
+      };
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Unknown error";
+
+      return {
+        success: false,
+        error: message,
+      };
+    }
+  };
 }
