@@ -1,6 +1,9 @@
 import express, { Application, Request, Response } from "express";
 import dotenv from "dotenv";
 import { connectDB } from "./config/db";
+import productsRoutes from "./routes/productsRoutes";
+import ordersRoutes from "./routes/ordersRoutes";
+import resetPasswordRoutes from "./routes/resetPasswordRoutes";
 
 dotenv.config();
 
@@ -18,6 +21,10 @@ app.get("/", (_req: Request, res: Response) => {
     message: "API is running",
   });
 });
+
+app.use("/products", productsRoutes);
+app.use("/orders", ordersRoutes);
+app.use("/reset-password", resetPasswordRoutes);
 
 // Start server
 async function startServer() {

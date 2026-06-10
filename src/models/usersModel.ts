@@ -11,33 +11,33 @@ const UsersSchema = new Schema(
     email: {
       type: String,
       required: true,
-      min: 0,
+      trim: true,
+      lowercase: true,
     },
 
     password: {
-      type: Number,
+      type: String,
       required: true,
-      min: 0,
-      default: 0,
     },
 
     code: {
-      type: Number,
-      default: 0,
-      min: 0,
+      type: String,
+      default: "",
+    },
+
+    codeExpires: {
+      type: Date,
     },
 
     isverified: {
-      type: String,
+      type: Boolean,
       required: true,
-      trim: true,
+      default: false,
     },
-
-
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 const UsersModel = model("Users", UsersSchema);

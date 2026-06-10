@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { isValidObjectId } from "mongoose";
 import ProductService from "../services/productsService";
 
 export default class ProductController {
@@ -10,7 +11,7 @@ export default class ProductController {
 
   public getAllProducts = async (
     req: Request,
-    res: Response
+    res: Response,
   ): Promise<void> => {
     const result = await this.productService.getAllProducts();
 
@@ -22,14 +23,19 @@ export default class ProductController {
     res.status(200).json(result.data);
   };
 
-  public getProdById = async (
-    req: Request,
-    res: Response
-  ): Promise<void> => {
+  public getProdById = async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
+    if (typeof id !== "string") {
+      res.status(400).json({ error: "Invalid id" });
+      return;
+    }
 
-    const result =
-      await this.productService.getProductById(id);
+    if (!isValidObjectId(id)) {
+      res.status(400).json({ error: "Invalid product id" });
+      return;
+    }
+
+    const result = await this.productService.getProductById(id);
 
     if (!result.success) {
       res.status(404).json({ error: result.error });
@@ -39,12 +45,8 @@ export default class ProductController {
     res.status(200).json(result.data);
   };
 
-  public createProd = async (
-    req: Request,
-    res: Response
-  ): Promise<void> => {
-    const result =
-      await this.productService.createProduct(req.body);
+  public createProd = async (req: Request, res: Response): Promise<void> => {
+    const result = await this.productService.createProduct(req.body);
 
     if (!result.success) {
       res.status(400).json({ error: result.error });
@@ -54,16 +56,19 @@ export default class ProductController {
     res.status(201).json(result.data);
   };
 
-  public editProd = async (
-    req: Request,
-    res: Response
-  ): Promise<void> => {
+  public editProd = async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
+    if (typeof id !== "string") {
+      res.status(400).json({ error: "Invalid id" });
+      return;
+    }
 
-    const result = await this.productService.editProd(
-      id,
-      req.body
-    );
+    if (!isValidObjectId(id)) {
+      res.status(400).json({ error: "Invalid product id" });
+      return;
+    }
+
+    const result = await this.productService.editProd(id, req.body);
 
     if (!result.success) {
       res.status(404).json({ error: result.error });
@@ -73,14 +78,19 @@ export default class ProductController {
     res.status(200).json(result.data);
   };
 
-  public deleteProd = async (
-    req: Request,
-    res: Response
-  ): Promise<void> => {
+  public deleteProd = async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
+    if (typeof id !== "string") {
+      res.status(400).json({ error: "Invalid id" });
+      return;
+    }
 
-    const result =
-      await this.productService.deleteProd(id);
+    if (!isValidObjectId(id)) {
+      res.status(400).json({ error: "Invalid product id" });
+      return;
+    }
+
+    const result = await this.productService.deleteProd(id);
 
     if (!result.success) {
       res.status(404).json({ error: result.error });

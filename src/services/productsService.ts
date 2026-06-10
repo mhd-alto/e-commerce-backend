@@ -1,3 +1,4 @@
+import { isValidObjectId } from "mongoose";
 import ProductModel from "../models/productsModel";
 
 export interface ServiceResponse<T> {
@@ -23,10 +24,15 @@ export default class ProductService {
     }
   }
 
-  async getProductById(
-    id: string
-  ): Promise<ServiceResponse<any>> {
+  async getProductById(id: string): Promise<ServiceResponse<any>> {
     try {
+      if (!isValidObjectId(id)) {
+        return {
+          success: false,
+          error: "Invalid product id",
+        };
+      }
+
       const product = await ProductModel.findById(id);
 
       if (!product) {
@@ -48,9 +54,7 @@ export default class ProductService {
     }
   }
 
-  async createProduct(
-    productData: any
-  ): Promise<ServiceResponse<any>> {
+  async createProduct(productData: any): Promise<ServiceResponse<any>> {
     try {
       const product = await ProductModel.create(productData);
 
@@ -66,18 +70,18 @@ export default class ProductService {
     }
   }
 
-  async editProd(
-    id: string,
-    productData: any
-  ): Promise<ServiceResponse<any>> {
+  async editProd(id: string, productData: any): Promise<ServiceResponse<any>> {
     try {
-      const product = await ProductModel.findByIdAndUpdate(
-        id,
-        productData,
-        {
-          new: true,
-        }
-      );
+      if (!isValidObjectId(id)) {
+        return {
+          success: false,
+          error: "Invalid product id",
+        };
+      }
+
+      const product = await ProductModel.findByIdAndUpdate(id, productData, {
+        new: true,
+      });
 
       if (!product) {
         return {
@@ -98,10 +102,15 @@ export default class ProductService {
     }
   }
 
-  async deleteProd(
-    id: string
-  ): Promise<ServiceResponse<any>> {
+  async deleteProd(id: string): Promise<ServiceResponse<any>> {
     try {
+      if (!isValidObjectId(id)) {
+        return {
+          success: false,
+          error: "Invalid product id",
+        };
+      }
+
       const product = await ProductModel.findByIdAndDelete(id);
 
       if (!product) {
