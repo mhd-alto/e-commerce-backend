@@ -2,6 +2,9 @@ import express, { Application, Request, Response } from "express";
 import dotenv from "dotenv";
 import { connectDB } from "./config/db";
 import authRouter from "./routes/authRoutes";
+import productsRoutes from "./routes/productsRoutes";
+import ordersRoutes from "./routes/ordersRoutes";
+import resetPasswordRoutes from "./routes/resetPasswordRoutes";
 
 dotenv.config();
 
@@ -20,6 +23,11 @@ app.get("/", (_req: Request, res: Response) => {
   });
 });
 app.use("/auth", authRouter);
+
+app.use("/products", productsRoutes);
+app.use("/orders", ordersRoutes);
+app.use("/reset-password", resetPasswordRoutes);
+
 // Start server
 async function startServer() {
   // Connect DB if configured, but always start the server.

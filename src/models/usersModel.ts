@@ -13,26 +13,30 @@ const UsersSchema = new Schema(
       required: true,
       unique: true,
       min: 0,
+      trim: true,
+      lowercase: true,
     },
 
     password: {
       type: String,
       required: true,
       min: 0,
-      default: 0,
       select: false,
     },
 
     code: {
-      type: Number,
-      default: 0,
-      min: 0,
+      type: String,
+      default: "",
+    },
+
+    codeExpires: {
+      type: Date,
     },
 
     isverified: {
       type: Boolean,
       required: true,
-      trim: true,
+      default: false,
     },
     role: {
       type: String,
