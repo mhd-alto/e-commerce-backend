@@ -32,6 +32,10 @@ export default class OrderController {
   ): Promise<void> => {
     try {
       const { id } = req.params;
+if (typeof id !== "string") {
+  res.status(400).json({ error: "Invalid id" });
+  return;
+}
 
       const result = await this.orderService.getOrderById(id);
 
@@ -56,17 +60,16 @@ export default class OrderController {
       if (result.success) {
         res.status(201).json({
           data: result.data,
-          warning: result.warning,
         });
         return;
       }
 
-      if (result.error === "all fields are required") {
+      if (result.error === "All fields are required") {
         res.status(400).json({ error: result.error });
         return;
       }
 
-      if (result.error === "Product Not Found") {
+      if (result.error === "Product not found") {
         res.status(404).json({ error: result.error });
         return;
       }
@@ -83,11 +86,12 @@ export default class OrderController {
   ): Promise<void> => {
     try {
       const { id } = req.params;
+if (typeof id !== "string") {
+  res.status(400).json({ error: "Invalid id" });
+  return;
+}
 
-      const result = await this.orderService.rejectOrder(
-        id,
-        req.body
-      );
+      const result = await this.orderService.rejectOrder(id);
 
       if (result.success) {
         res.status(200).json(result.data);
@@ -106,6 +110,10 @@ export default class OrderController {
   ): Promise<void> => {
     try {
       const { id } = req.params;
+if (typeof id !== "string") {
+  res.status(400).json({ error: "Invalid id" });
+  return;
+}
 
       const result = await this.orderService.acceptOrder(id);
 

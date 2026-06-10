@@ -130,7 +130,7 @@ export default class OrderService {
       }
 
       product.quantity -= order.quantity;
-
+       product.soldProducts++
       await product.save();
 
       order.status = "accepted";
@@ -174,33 +174,6 @@ export default class OrderService {
       return {
         success: true,
         data: order,
-      };
-    } catch (error: any) {
-      return {
-        success: false,
-        error: error.message,
-      };
-    }
-  }
-
-  async deleteOrder(id: string): Promise<ServiceResponse<any>> {
-    try {
-      const order = await OrderModel.findById(id);
-
-      if (!order) {
-        return {
-          success: false,
-          error: "Order not found",
-        };
-      }
-
-      await OrderModel.findByIdAndDelete(id);
-
-      return {
-        success: true,
-        data: {
-          message: "Order deleted successfully",
-        },
       };
     } catch (error: any) {
       return {

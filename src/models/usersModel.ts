@@ -9,35 +9,35 @@ const UsersSchema = new Schema(
     },
 
     email: {
-      type: Number,
-      required: true,
-      min: 0,
-    },
-
-    password: {
-      type: Number,
-      required: true,
-      min: 0,
-      default: 0,
-    },
-
-    code: {
-      type: Number,
-      default: 0,
-      min: 0,
-    },
-
-    isverified: {
       type: String,
       required: true,
       trim: true,
+      lowercase: true,
     },
 
+    password: {
+      type: String,
+      required: true,
+    },
 
+    code: {
+      type: String,
+      default: "",
+    },
+
+    codeExpires: {
+      type: Date,
+    },
+
+    isverified: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 const UsersModel = model("users", UsersSchema);
